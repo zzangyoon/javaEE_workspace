@@ -19,7 +19,6 @@ public class BoardContent extends Page{
 	JButton bt_list, bt_edit, bt_del;
 	Notice notice;	//VO
 	NoticeDAO noticeDAO;	//DAO
-	int notice_id;
 	
 	public BoardContent(BoardMain boardMain) {
 		super(boardMain);
@@ -55,31 +54,49 @@ public class BoardContent extends Page{
 		
 		//수정버튼에 리스너 연결
 		bt_edit.addActionListener((e)->{
-			edit();
+			//한번 물어보고 수정하자
+			if(JOptionPane.showConfirmDialog(BoardContent.this, "수정하시겠습니까?")==JOptionPane.OK_OPTION) {
+				edit();
+			}
 		});
 		
 		
 		bt_del.addActionListener((e)->{
-			noticeDAO = new NoticeDAO();
-			//System.out.println(notice_id);
-			int result = noticeDAO.del(notice_id);
-			if(result==0) {
-				JOptionPane.showMessageDialog(BoardContent.this, "삭제 실패");
-			}else {
-				JOptionPane.showMessageDialog(BoardContent.this, "삭제  성공");
-				boardMain.showPage(Pages.valueOf("BoardList").ordinal());
+			//한번 물어보고 삭제하자
+			if(JOptionPane.showConfirmDialog(BoardContent.this, "삭제하시겠습니까?")==JOptionPane.OK_OPTION) {
+				del();
 			}
 		});
 	}
 	
+	public void del() {
+		//삭제하고 목록보여주기
+		noticeDAO = new NoticeDAO();
+		//System.out.println(notice_id);
+		//int result = noticeDAO.del(notice_id);
+		int result = noticeDAO.del(notice.getNotice_id());	//notice VO 갖고 있으므로
+		
+		if(result==0) {
+			JOptionPane.showMessageDialog(BoardContent.this, "삭제 실패");
+		}else {
+			JOptionPane.showMessageDialog(BoardContent.this, "삭제  성공");
+			
+			BoardList boardList = (BoardList)boardMain.pageList[Pages.valueOf("BoardList").ordinal()];
+			boardList.getList();//데이터 가져오기!!! (이걸 안해서 갱신이 안됐다!!!)
+			boardList.table.updateUI();	//화면 갱신
+			boardMain.showPage(Pages.valueOf("BoardList").ordinal());
+		}
+	}
+	
 	public void edit() {
-		Notice notice = new Notice();
+		//DAO를 이용하여 수정작업 수행
+		//작성자, 제목, 내용만 교체!!!
+		//Notice notice = new Notice();	//New 할 필요가 없다!!! 재사용성 위해 위에서 
 		notice.setAuthor(t_author.getText());
 		notice.setTitle(t_title.getText());
 		notice.setContent(area.getText());
-		notice.setNotice_id(notice_id);
 		
-		noticeDAO = new NoticeDAO();
+		//noticeDAO = new NoticeDAO();	//얘도 위에서 해줬다
 		int result = noticeDAO.edit(notice);
 		
 		if(result==0) {
@@ -96,7 +113,6 @@ public class BoardContent extends Page{
 		t_author.setText(notice.getAuthor());
 		t_title.setText(notice.getTitle());
 		area.setText(notice.getContent());
-		notice_id=notice.getNotice_id();
 	}
 
 }

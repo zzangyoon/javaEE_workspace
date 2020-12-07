@@ -112,6 +112,12 @@ public class NoticeDAO {
 				notice.setHit(rs.getInt("hit"));
 			}
 			
+			//조회수 증가
+			sql="update notice set hit = hit+1 where notice_id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, notice_id);	//매개변수로 넘겨받은 notice_id
+			pstmt.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -168,15 +174,7 @@ public class NoticeDAO {
 			dbManager.release(con, pstmt);
 		}
 		return result;
-		
-		
 	}
-	
-	
-	
-	
-	
-	
 	
 }
 
