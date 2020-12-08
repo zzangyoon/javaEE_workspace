@@ -33,6 +33,12 @@ th, td {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+img{
+	box-sizing:border-box;
+}
+a{
+	text-decoration:none;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
@@ -61,10 +67,13 @@ $(function(){
   <tr>
     <td>26</td>
     <td>
-	  <a href="/qna/detail.jsp?qna_id=<%=qna.getQna_id()%>"><%=qna.getTitle()%></a>
+    	<%if(qna.getDepth()>0){ //depth가 0보다 큰 경우 답변으로 판단하자%>	
+ 		   	<img src="/images/reply.png" style="margin-left:<%=17*qna.getDepth()%>px">
+    	<%} %>
+	  	<a href="/qna/detail.jsp?qna_id=<%=qna.getQna_id()%>"><%=qna.getTitle()%></a>
 	</td>
     <td><%=qna.getWriter()%></td>
-	<td><%=qna.getRegdate()%></td>
+	<td><%=qna.getRegdate().substring(0, 10)%></td>	<!-- 날짜가 초단위까지 나와 너무 길어서 substring 10자 제한으로! -->
 	<td><%=qna.getHit()%></td>
   </tr>
   <%}%>
