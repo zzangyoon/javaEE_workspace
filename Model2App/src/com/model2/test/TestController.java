@@ -30,5 +30,10 @@ public class TestController implements Controller{
 												//파일명이 하드코딩 되어있다 > mapping.json에서 처리하자!
 	}
 
+	@Override
+	public boolean isForward() {
+		return false;
+	}
+
 	
 }
